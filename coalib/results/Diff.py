@@ -391,3 +391,23 @@ class Diff:
 
         linediff.change = (original_line, replacement)
         self._changes[line_nr] = linediff
+
+    def replace(self, range, replacement):
+        """
+        Replaces a part of text. Allows to span multiple lines.
+
+        This function uses ``add_lines`` and ``delete_lines`` accordingly, so
+        calls of those functions on lines given ``range`` affects after usage
+        or vice versa lead to ``ConflictError``.
+
+        :param range:       The ``TextRange`` that gets replaced.
+        :param replacement: The replacement string. Can be multiline.
+        """
+        # Remaining parts of the lines not affected by the replace.
+        first_part = (
+            self.original[range.start.line - 1][:range.start.column - 1])
+        last_part = self.original[range.end.line - 1][range.end.column - 1:]
+
+        self.delete_lines(range.start.line, range.end.line)
+        self.add_lines(range.start.line - 1,
+                       (first_part + replacement + last_part).splitlines())

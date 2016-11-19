@@ -2,6 +2,7 @@ import json
 import unittest
 from unittest.case import SkipTest
 
+from coalib.results.TextRange import TextRange
 from coalib.output.JSONEncoder import create_json_encoder
 from coalib.results.Diff import ConflictError, Diff, SourceRange
 
@@ -260,3 +261,23 @@ class DiffTest(unittest.TestCase):
         self.uut.delete = True
         self.assertEqual(self.uut.modified, [])
         self.uut.delete = False
+
+    def test_replace(self):
+        test_text = ["hello", "world", "4lines", "done"]
+
+        def test_replace_case(range, text, expected):
+            uut = Diff(test_text)
+            uut.replace(range, text)
+            self.assertEqual(uut.modified, expected)
+
+        test_replace_case(TextRange.from_values(1, 5, 4, 3),
+                          "\nyeah\ncool\nno",
+                          ["hell", "yeah", "cool", "none"])
+
+        test_replace_case(TextRange.from_values(2, 1, 3, 5),
+                          "b",
+                          ["hello", "bes", "done"])
+
+        test_replace_case(TextRange.from_values(1, 6, 4, 3),
+                          "",
+                          ["hellone"])
