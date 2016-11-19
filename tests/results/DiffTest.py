@@ -302,3 +302,23 @@ class DiffTest(unittest.TestCase):
         test_insert_case(TextPosition(2, 4),
                          "\nwoopy\ndoopy\n",
                          ["123", "456", "woopy", "doopy", "789"])
+
+    def test_remove(self):
+        test_text = ["nice", "try", "bro"]
+
+        def test_insert_case(range, expected):
+            uut = Diff(test_text)
+            uut.remove(range)
+            self.assertEqual(uut.modified, expected)
+
+        test_insert_case(TextRange.from_values(1, 1, 1, 4),
+                         ["e", "try", "bro"])
+
+        test_insert_case(TextRange.from_values(1, 5, 2, 1),
+                         ["nicetry", "bro"])
+
+        test_insert_case(TextRange.from_values(1, 3, 3, 2),
+                         ["niro"])
+
+        test_insert_case(TextRange.from_values(2, 1, 2, 1),
+                         test_text)

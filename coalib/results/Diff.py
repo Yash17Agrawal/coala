@@ -421,3 +421,11 @@ class Diff:
         :param text:     The text to insert.
         """
         self.replace(TextRange(position, position), text)
+
+    def remove(self, range):
+        """
+        Removes a piece of text in a given range.
+
+        :param range: The range to delete.
+        """
+        self.replace(range, '')
