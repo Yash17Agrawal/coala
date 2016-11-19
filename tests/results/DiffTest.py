@@ -2,6 +2,7 @@ import json
 import unittest
 from unittest.case import SkipTest
 
+from coalib.results.TextPosition import TextPosition
 from coalib.results.TextRange import TextRange
 from coalib.output.JSONEncoder import create_json_encoder
 from coalib.results.Diff import ConflictError, Diff, SourceRange
@@ -281,3 +282,23 @@ class DiffTest(unittest.TestCase):
         test_replace_case(TextRange.from_values(1, 6, 4, 3),
                           "",
                           ["hellone"])
+
+    def test_insert(self):
+        test_text = ["123", "456", "789"]
+
+        def test_insert_case(position, text, expected):
+            uut = Diff(test_text)
+            uut.insert(position, text)
+            self.assertEqual(uut.modified, expected)
+
+        test_insert_case(TextPosition(2, 3),
+                         "woopy doopy",
+                         ["123", "45woopy doopy6", "789"])
+
+        test_insert_case(TextPosition(1, 1),
+                         "woopy\ndoopy",
+                         ["woopy", "doopy123", "456", "789"])
+
+        test_insert_case(TextPosition(2, 4),
+                         "\nwoopy\ndoopy\n",
+                         ["123", "456", "woopy", "doopy", "789"])

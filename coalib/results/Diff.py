@@ -3,6 +3,7 @@ import difflib
 
 from coalib.results.LineDiff import LineDiff, ConflictError
 from coalib.results.SourceRange import SourceRange
+from coalib.results.TextRange import TextRange
 from coala_utils.decorators import enforce_signature, generate_eq
 
 
@@ -411,3 +412,12 @@ class Diff:
         self.delete_lines(range.start.line, range.end.line)
         self.add_lines(range.start.line - 1,
                        (first_part + replacement + last_part).splitlines())
+
+    def insert(self, position, text):
+        """
+        Inserts (multiline) text at arbitrary position.
+
+        :param position: The ``TextPosition`` where to insert text.
+        :param text:     The text to insert.
+        """
+        self.replace(TextRange(position, position), text)
